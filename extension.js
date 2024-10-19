@@ -541,7 +541,7 @@ game.import("extension", function () {
                                     player.storage.shiliUseCard = false;
                                 },
                                 trigger: {
-                                    player: ["useCardBefore", "useCardAfter", "discardAfter"],
+                                    player: ["useCardBefore", "useCardAfter", "discardBefore"/* , "discardAfter" */],
                                 },
                                 filter(event, player) {
                                     var has = false;
@@ -585,8 +585,8 @@ game.import("extension", function () {
                                             false,
                                         );
                                         event.finish();
-                                    } else{
-                                        player.useCard({name:card}, player);
+                                    } else {
+                                        player.useCard({ name: card }, player);
                                         event.finish();
                                     }
                                 },
@@ -599,6 +599,7 @@ game.import("extension", function () {
                                     global: ["loseAfter", "cardsDiscardAfter", "loseAsyncAfter"],
                                 },
                                 filter(event, player) {
+                                    if (event.cards.length == 1 && get.name(event.cards[0]) == "tiesuo") return false;
                                     if (event.name.indexOf("lose") == 0) {
                                         if (event.getlx === false || event.position != ui.discardPile) return false;
                                     } else {
@@ -623,17 +624,6 @@ game.import("extension", function () {
                                 },
                                 "_priority": 0,
                             },
-                            /* 3: {
-                                forced: true,
-                                frequent: true,
-                                trigger: {
-                                    : "phaseBegin",
-                                },
-                                filter(event, player) {
-                                    player.tempBanSkill("shili");   
-                                    return false;
-                                },
-                            }, */
                         },
                     },
                     tangwei: {
