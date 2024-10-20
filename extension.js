@@ -102,9 +102,10 @@ game.import("extension", function () {
         help: {}, config: {}, package: {
             character: {
                 character: {
-                    yvjingyi: ["male", "Ren", "4/4/0", ["luantang", "tongshi"], ["ext:唐包/yvjingyi.jpg", "die:ext:唐/audio/die/yvjingyi.mp3"]],
-                    hanxing: ["male", "Ren", "3/3/0", ["yvtang", "hanxing_shuhe", "hanxing_tianshu"], ["ext:唐包/hanxing.jpg", "die:ext:唐/audio/die/hanxing.mp3"]],
-                    jiangzhihuan: ["male", "Ren", "3/3/0", ["rutang", "shili"], ["ext:唐包/jiangzhihuan.jpg", "die:ext:唐/audio/die/jiangzhihuan.mp3"]],
+                    yvjingyi: ["male", "Ren", "4/4/0", ["luantang", "tongshi"], ["ext:唐包/image/yvjingyi.jpg", "die:ext:唐包/audio/yvjingyi.mp3"]],
+                    hanxing: ["male", "Ren", "3/3/0", ["yvtang", "hanxing_shuhe", "hanxing_tianshu"], ["ext:唐包/image/hanxing.jpg", "die:ext:唐包/audio/hanxing.mp3"]],
+                    jiangzhihuan: ["male", "Ren", "3/3/0", ["rutang", "shili"], ["ext:唐包/image/jiangzhihuan.jpg", "die:ext:唐包/audio/jiangzhihuan.mp3"]],
+                    wangxi: ["male", "Ren", "2/4/0", ["qutang", "tangqu"], ["ext:唐包/image/wangxi.jpg", "die:ext:唐包/audio/wangxi.mp3"]],
                 },
                 translate: {
                     tangbao: "唐包",
@@ -315,8 +316,8 @@ game.import("extension", function () {
                         "_priority": 0,
                     },
                     weitang: {
+                        locked: true,
                         forced: true,
-                        frequent: true,
                         trigger: {
                             player: "useCardToBefore",
                         },
@@ -380,7 +381,7 @@ game.import("extension", function () {
                     yvtang: {
                         audio: 2,
                         forced: true,
-                        frequent: true,
+                        locked: true,
                         mark: true,
                         marktext: "语",
                         intro: {
@@ -519,7 +520,7 @@ game.import("extension", function () {
                     },
                     rutang: {
                         forced: true,
-                        frequent: true,
+                        locked: true,
                         trigger: {
                             global: "gameStart",
                         },
@@ -531,12 +532,12 @@ game.import("extension", function () {
                     },
                     shili: {
                         forced: true,
-                        frequent: true,
+                        locked: true,
                         group: ["shili_1", "shili_2"/* , "shili_3" */],
                         subSkill: {
                             1: {
                                 forced: true,
-                                frequent: true,
+                                locked: true,
                                 init(player) {
                                     player.storage.shiliUseCard = false;
                                 },
@@ -545,7 +546,7 @@ game.import("extension", function () {
                                 },
                                 filter(event, player) {
                                     var has = false;
-                                    if (player.storage.shiliUseCard) return true;
+                                    if (player.storage.shiliUseCard && event.name == "useCard") return true;
                                     for (var i of event.cards) {
                                         if (i.hasGaintag("理")) {
                                             if (!player.storage.shiliUseCard && event.name == "useCard") {
@@ -594,7 +595,7 @@ game.import("extension", function () {
                             },
                             2: {
                                 forced: true,
-                                frequent: true,
+                                locked: true,
                                 trigger: {
                                     global: ["loseAfter", "cardsDiscardAfter", "loseAsyncAfter"],
                                 },
@@ -626,7 +627,39 @@ game.import("extension", function () {
                             },
                         },
                     },
-                    tangwei: {
+                    /* tangwei: {
+                        trigger: {
+                            player: "phaseBegin",
+                        },
+                        content() {
+                            "step 0"
+                            player.chooseControl(["1", "2"], function () {
+                                if (Math.random() < 0.5) return "1";
+                                return "2";
+                            });
+                            "step 1"
+                            if (result.control == "1") {
+                                player.chooseControl([]);
+                            } else {
+                                var skills = [];
+                                for (var i in lib.skill) {
+                                    if (i.indexOf("tang") == -1 && i.indexOf("shili") == -1) {
+                                        skills.push(i);
+                                    }
+                                }
+                                player.chooseControl(skills);
+                            }
+                            "step 2"
+                            if (result.control == "shili") {
+                                player.chooseToDiscard("h", true);
+                            }
+                        },
+                        "_priority": 0,
+                    }, */
+                    qutang: {
+
+                    },
+                    tangqu: {
                     },
                 },
                 translate: {
@@ -644,10 +677,14 @@ game.import("extension", function () {
                     "hanxing_tianshu_info": "锁定技，你的第一个回合开始时，将1-5字牌各4张加入牌堆，称为“数牌”。当你弃置“数牌”时，获得一张字数相同的牌（不为“数牌”）。",
                     rutang: "乳唐",
                     "rutang_info": "锁定技，游戏开始时，给全场角色增加“唐危”。",
-                    shili: "识理",
+                    shili: "拾理",
                     "shili_info": "锁定技，你获得不因使用而进入弃牌堆的牌，称为“理”。当你使用“理”牌后，可以视为使用1张基本牌。当你弃置“理”牌后，增加1点体力上限，本技能失效直到回合结束。",
                     tangwei: "唐危",
                     "tangwei_info": "回合开始时，你选择一项：①选择1个名字带“唐”的技能失效直到回合结束②随机1个名字不带“唐”的技能失效直到回合结束。若选择的技能不带“唐”，你随机弃置1张手牌。",
+                    qutang:"驱唐",
+                    "qutang_info": "转换技，当你的体力值改变后，①若你的体力值≤0，你死亡。②若你的体力值等于体力上限，你死亡。若你没有因此死亡，你获得1个“趋”标记。",
+                    tangqu:"唐趋",
+                    "tangqu_info": "当一名角色使用基本牌或普通锦囊牌时，你可以：弃置1个“趋”标记，修改1个目标；弃置2个“趋”标记，增加或减少1个目标。",
                 },
             },
             intro: "",
